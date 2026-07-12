@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thrust Gym - Minimalist Outdoor Poster Mockup</title>
+  <!-- Google Fonts for Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================================================
+       CSS Variables & Design Tokens (Minimal Revision)
+       ========================================================================== */
+    :root {
+      /* Colors - Sleek monochromatic palette with subtle warm accents */
+      --bg-dark: #070708;
+      --bg-poster: #0a0a0c;
+      --border-minimal: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(255, 255, 255, 0.2);
+      --text-light: #ffffff;
+      --text-muted: #8e8e93;
+      --bronze-accent: #c5a880; /* Subtle warm bronze/champagne accent */
+      
+      /* Scale Control */
+      --poster-scale: 1.0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+      font-family: 'Outfit', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ==========================================================================
+       Minimalist Dashboard & Controls (Hidden during print)
+       ========================================================================== */
+    header.dashboard-header {
+      background-color: rgba(10, 10, 12, 0.95);
+      border-bottom: 1px solid var(--border-minimal);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-logo {
+      width: 24px;
+      height: 24px;
+      fill: var(--text-light);
+    }
+
+    .brand-title {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .control-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    .slider {
+      -webkit-appearance: none;
+      width: 120px;
+      height: 4px;
+      background: #1c1c1e;
+      outline: none;
+      border-radius: 2px;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--text-light);
+      cursor: pointer;
+    }
+
+    .btn {
+      background: transparent;
+      border: 1px solid var(--border-minimal);
+      color: var(--text-light);
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+    }
+
+    .btn:hover {
+      background: var(--text-light);
+      color: var(--bg-dark);
+      border-color: var(--text-light);
+    }
+
+    .btn-active {
+      background: var(--text-light);
+      color: var(--bg-dark);
+      border-color: var(--text-light);
+    }
+
+    .btn svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    /* Main View Wrapper */
+    .view-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 3rem 1.5rem;
+      position: relative;
+      background: #0f1012;
+    }
+
+    /* ==========================================================================
+       Minimal Billboard Environment Mockup View
+       ========================================================================== */
+    .billboard-mockup-scene {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      transition: all 0.5s ease;
+    }
+
+    /* Minimal Concrete/Slate Wall backdrop */
+    .wall-background {
+      position: absolute;
+      top: -10%;
+      bottom: -10%;
+      left: -15%;
+      right: -15%;
+      background: radial-gradient(circle at 50% 10%, #1c1d22 0%, #0a0b0d 90%);
+      z-index: 1;
+      box-shadow: inset 0 0 60px rgba(0,0,0,0.9);
+      border-radius: 8px;
+    }
+
+    /* Spotlight beams */
+    .spotlights-container {
+      position: absolute;
+      top: -10%;
+      left: 0;
+      width: 100%;
+      height: 60%;
+      pointer-events: none;
+      z-index: 3;
+      display: flex;
+      justify-content: space-around;
+      opacity: 0.5;
+    }
+
+    .spotlight-beam {
+      width: 25%;
+      height: 100%;
+      background: radial-gradient(ellipse at top, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.01) 50%, transparent 80%);
+      transform-origin: top center;
+    }
+
+    /* Minimal Billboard Frame */
+    .billboard-frame {
+      width: 100%;
+      background: #121214;
+      border: 14px solid #1c1c1e;
+      box-shadow: 
+        0 30px 60px -15px rgba(0, 0, 0, 0.9),
+        0 0 30px rgba(0, 0, 0, 0.4);
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    /* Sidewalk structure */
+    .sidewalk {
+      width: 110%;
+      height: 20px;
+      background: #16161a;
+      border-top: 2px solid #282830;
+      position: absolute;
+      bottom: -40px;
+      z-index: 1;
+      transform: perspective(400px) rotateX(10deg);
+    }
+
+    /* Raw view overrides */
+    .view-raw {
+      background: #000;
+      padding: 0;
+    }
+
+    .view-raw .wall-background,
+    .view-raw .spotlights-container,
+    .view-raw .sidewalk {
+      display: none !important;
+    }
+
+    .view-raw .billboard-frame {
+      border: none !important;
+      box-shadow: none !important;
+      width: 100vw;
+      height: 80vh;
+      max-width: 100vw;
+      max-height: 80vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* ==========================================================================
+       THE 10FT X 8FT POSTER CONTAINER (Minimalist Layout)
+       ========================================================================== */
+    .poster-container {
+      width: 100%;
+      aspect-ratio: 5 / 4;
+      background-color: var(--bg-poster);
+      position: relative;
+      overflow: hidden;
+      container-type: size;
+      transform: scale(var(--poster-scale));
+      transform-origin: center center;
+      transition: transform 0.2s ease-out;
+    }
+
+    /* Minimal Outer Border */
+    .poster-border-outer {
+      position: absolute;
+      top: 2.2cqw;
+      bottom: 2.2cqw;
+      left: 2.2cqw;
+      right: 2.2cqw;
+      border: 1px solid var(--border-minimal);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* Poster Content Layout */
+    .poster-content {
+      width: 100%;
+      height: 100%;
+      padding: 4.5cqw 4.5cqw 4.2cqw 4.5cqw;
+      display: flex;
+      flex-direction: column;
+      z-index: 4;
+      position: relative;
+    }
+
+    /* ==========================================================================
+       Asymmetrical Header (Minimal)
+       ========================================================================== */
+    .poster-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 2.2cqw;
+      padding-bottom: 1.5cqw;
+      border-bottom: 1px solid var(--border-minimal);
+    }
+
+    /* Left side Logo */
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.8cqw;
+    }
+
+    .logo-icon-svg {
+      width: 2.2cqw;
+      height: 2.2cqw;
+      fill: var(--text-light);
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-main-title {
+      font-size: 2.2cqw;
+      font-weight: 900;
+      color: var(--text-light);
+      letter-spacing: 0.25em;
+      line-height: 1.0;
+    }
+
+    .logo-subtitle {
+      font-size: 0.7cqw;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-top: 0.2cqw;
+    }
+
+    /* Right side Title */
+    .poster-title {
+      font-size: 1.7cqw;
+      font-weight: 300;
+      color: var(--text-light);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+
+    /* ==========================================================================
+       Hero Section (Group Image) - Set to 30% of poster height (80cqw * 0.3 = 24cqw)
+       ========================================================================== */
+    .hero-banner {
+      width: 100%;
+      height: 24cqw; /* Exactly 30% of poster height */
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border-minimal);
+      margin-bottom: 2.5cqw;
+    }
+
+    .hero-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(10%) contrast(1.1) brightness(0.9);
+      transition: transform 0.6s ease;
+    }
+
+    .hero-banner:hover .hero-image {
+      transform: scale(1.03);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
+      pointer-events: none;
+    }
+
+    /* Monospace label on hero */
+    .hero-tag {
+      position: absolute;
+      bottom: 1.2cqw;
+      left: 1.5cqw;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85cqw;
+      letter-spacing: 2px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      background: rgba(7, 7, 8, 0.85);
+      padding: 0.4cqw 0.8cqw;
+      border: 1px solid var(--border-minimal);
+    }
+
+    /* ==========================================================================
+       Two Columns Layout (Below Hero)
+       ========================================================================== */
+    .poster-columns {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 58.5cqw 29.5cqw;
+      gap: 3cqw;
+      min-height: 0;
+    }
+
+    /* LEFT COLUMN */
+    .column-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    /* Amenities Minimal List */
+    .amenities-list-section {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1.5cqw;
+    }
+
+    .section-title {
+      font-size: 0.85cqw;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 1.2cqw;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .minimal-list-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 3cqw;
+      row-gap: 0.8cqw;
+    }
+
+    .list-item {
+      font-size: 1.25cqw;
+      font-weight: 400;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      gap: 0.8cqw;
+    }
+
+    .list-item-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8cqw;
+      color: var(--bronze-accent);
+      border: 1px solid var(--border-minimal);
+      padding: 0.15cqw 0.4cqw;
+      border-radius: 2px;
+    }
+
+    /* Bottom Thumbnails Grid (4 Horizontal slots) */
+    .amenities-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1cqw;
+    }
+
+    .amenity-card {
+      width: 100%;
+      height: 11cqw; /* Explicitly sized height to prevent flexbox rendering collapse */
+      border: 1px solid var(--border-minimal);
+      position: relative;
+      overflow: hidden;
+      background-color: #121214;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .amenity-card:hover {
+      border-color: var(--border-focus);
+      transform: translateY(-2px);
+    }
+
+    .amenity-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(40%) contrast(1.1) brightness(0.85);
+      transition: transform 0.5s ease;
+    }
+
+    .amenity-card:hover .amenity-image {
+      transform: scale(1.06);
+      filter: grayscale(0%) contrast(1.1) brightness(0.9);
+    }
+
+    .amenity-label-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(7, 7, 8, 0.9);
+      padding: 0.5cqw 0.2cqw;
+      text-align: center;
+      border-top: 1px solid var(--border-minimal);
+    }
+
+    .amenity-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7cqw;
+      font-weight: 600;
+      color: var(--text-light);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* RIGHT COLUMN (Single Tall CrossFit Image) */
+    .column-right {
+      height: 100%;
+      position: relative;
+      border: 1px solid var(--border-minimal);
+      overflow: hidden;
+    }
+
+    .right-image-wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .right-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(15%) contrast(1.1) brightness(0.9);
+      transition: transform 0.6s ease;
+    }
+
+    .column-right:hover .right-image {
+      transform: scale(1.03);
+    }
+
+    .right-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.1) 50%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .right-tag {
+      position: absolute;
+      bottom: 1.5cqw;
+      left: 0;
+      width: 100%;
+      text-align: center;
+    }
+
+    .right-tag-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75cqw;
+      color: var(--bronze-accent);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 0.3cqw;
+    }
+
+    .right-tag-title {
+      font-size: 1.5cqw;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* ==========================================================================
+       Print Styles (Fixed to show the poster instead of hiding it)
+       ========================================================================== */
+    @media print {
+      body {
+        background-color: #000 !important;
+        color: #fff !important;
+      }
+      
+      header.dashboard-header {
+        display: none !important;
+      }
+
+      .view-wrapper {
+        padding: 0 !important;
+        margin: 0 !important;
+        background: none !important;
+        display: block !important;
+      }
+
+      .billboard-mockup-scene {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      .wall-background,
+      .spotlights-container,
+      .sidewalk {
+        display: none !important;
+      }
+
+      .billboard-frame {
+        border: none !important;
+        box-shadow: none !important;
+        background: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+      }
+
+      .poster-container {
+        transform: scale(1) !important;
+        width: 100vw !important;
+        height: 80vw !important; /* Keep 5:4 ratio */
+        margin: 0 !important;
+        position: relative !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       Dashboard / Control Panel Header (Hidden on Print)
+       ========================================================================== -->
+  <header class="dashboard-header" id="dashboard">
+    <div class="brand">
+      <svg class="brand-logo" viewBox="0 0 24 24">
+        <path d="M6 5h2v14H6zm10 0h2v14h-2zm-6-2h4v18h-4zm-8 6h2v6H2zm20 0h2v6h-2z"/>
+      </svg>
+      <span class="brand-title">Thrust Poster Preview</span>
+    </div>
+    
+    <div class="controls">
+      <div class="control-group">
+        <span class="control-label">View:</span>
+        <button class="btn btn-active" id="btn-mockup" onclick="setViewMode('mockup')">Billboard</button>
+        <button class="btn" id="btn-raw" onclick="setViewMode('raw')">Raw Poster</button>
+      </div>
+
+      <div class="control-group">
+        <span class="control-label">Scale:</span>
+        <input type="range" min="0.5" max="1.5" step="0.05" value="1.0" class="slider" id="scale-slider" oninput="adjustScale(this.value)">
+      </div>
+
+      <button class="btn" onclick="window.print()">Print / PDF</button>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       Billboard Environment / Visual Canvas
+       ========================================================================== -->
+  <main class="view-wrapper" id="view-canvas">
+    
+    <div class="billboard-mockup-scene" id="mockup-scene">
+      <div class="wall-background"></div>
+      <div class="spotlights-container">
+        <div class="spotlight-beam"></div>
+        <div class="spotlight-beam"></div>
+        <div class="spotlight-beam"></div>
+      </div>
+      
+      <div class="sidewalk"></div>
+
+      <!-- Billboard Frame (Minimal Dark) -->
+      <div class="billboard-frame">
+        
+        <!-- ==========================================================================
+             THE 10FT X 8FT POSTER CONTAINER
+             ========================================================================== -->
+        <div class="poster-container" id="poster">
+          
+          <div class="poster-border-outer"></div>
+
+          <!-- Poster Content -->
+          <div class="poster-content">
+            
+            <!-- ASYMMETRICAL HEADER -->
+            <div class="poster-header">
+              <div class="logo-container">
+                <svg class="logo-icon-svg" viewBox="0 0 64 64">
+                  <rect x="28" y="4" width="8" height="56" rx="2" />
+                  <rect x="20" y="8" width="24" height="6" rx="1" />
+                  <rect x="14" y="16" width="36" height="8" rx="2" />
+                  <rect x="20" y="50" width="24" height="6" rx="1" />
+                  <rect x="14" y="40" width="36" height="8" rx="2" />
+                </svg>
+                <div class="logo-text">
+                  <span class="logo-main-title">THRUST</span>
+                  <span class="logo-subtitle">Premium Gym & Wellness</span>
+                </div>
+              </div>
+              <h1 class="poster-title">First Premium Gym in Vignan Nagar</h1>
+            </div>
+
+            <!-- HERO BANNER (Group Training) -->
+            <div class="hero-banner">
+              <img src="group.jpeg" alt="Group Classes" class="hero-image">
+              <div class="hero-overlay"></div>
+              <span class="hero-tag">01 / DYNAMIC GROUP CLASSES</span>
+            </div>
+
+            <!-- TWO COLUMNS -->
+            <div class="poster-columns">
+              
+              <!-- LEFT COLUMN: Minimal Service List & Bottom Thumbnails -->
+              <div class="column-left">
+                <div class="amenities-list-section">
+                  <h2 class="section-title">Amenities & Services</h2>
+                  <div class="minimal-list-grid">
+                    <div class="list-item"><span class="list-item-num">01</span> Ice Bath Suite</div>
+                    <div class="list-item"><span class="list-item-num">02</span> Red-Light Therapy</div>
+                    <div class="list-item"><span class="list-item-num">03</span> Steam Room</div>
+                    <div class="list-item"><span class="list-item-num">04</span> InBody Composition Analysis</div>
+                    <div class="list-item"><span class="list-item-num">05</span> Yoga & Zumba Studio</div>
+                    <div class="list-item"><span class="list-item-num">06</span> Elite CrossFit Training</div>
+                  </div>
+                </div>
+
+                <!-- Bottom Amenities Strip (4 cards) -->
+                <div class="amenities-row">
+                  <!-- Card 1: Red Light -->
+                  <div class="amenity-card">
+                    <img src="red-light therapy.jpeg" alt="Red Light Therapy" class="amenity-image">
+                    <div class="amenity-label-overlay">
+                      <span class="amenity-title">Red-Light</span>
+                    </div>
+                  </div>
+                  <!-- Card 2: Steam Room -->
+                  <div class="amenity-card">
+                    <img src="steam room.jpeg" alt="Steam Room" class="amenity-image">
+                    <div class="amenity-label-overlay">
+                      <span class="amenity-title">Steam Room</span>
+                    </div>
+                  </div>
+                  <!-- Card 3: Ice Bath -->
+                  <div class="amenity-card">
+                    <img src="ice bath.jpeg" alt="Ice Bath" class="amenity-image">
+                    <div class="amenity-label-overlay">
+                      <span class="amenity-title">Ice Bath</span>
+                    </div>
+                  </div>
+                  <!-- Card 4: InBody -->
+                  <div class="amenity-card">
+                    <img src="Body composition analyser.jpeg" alt="Body composition analyser" class="amenity-image">
+                    <div class="amenity-label-overlay">
+                      <span class="amenity-title">InBody</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- RIGHT COLUMN: Single CrossFit Banner -->
+              <div class="column-right">
+                <div class="right-image-wrapper">
+                  <img src="crossfit.jpeg" alt="CrossFit Training" class="right-image">
+                  <div class="right-overlay"></div>
+                  <div class="right-tag">
+                    <div class="right-tag-num">02 / Elite Zone</div>
+                    <h3 class="right-tag-title">CrossFit</h3>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    function setViewMode(mode) {
+      const canvas = document.getElementById('view-canvas');
+      const scene = document.getElementById('mockup-scene');
+      const btnMockup = document.getElementById('btn-mockup');
+      const btnRaw = document.getElementById('btn-raw');
+      
+      if (mode === 'raw') {
+        canvas.classList.add('view-raw');
+        btnRaw.classList.add('btn-active');
+        btnMockup.classList.remove('btn-active');
+        document.getElementById('scale-slider').value = 1.0;
+        adjustScale(1.0);
+      } else {
+        canvas.classList.remove('view-raw');
+        btnMockup.classList.add('btn-active');
+        btnRaw.classList.remove('btn-active');
+      }
+    }
+
+    function adjustScale(val) {
+      document.documentElement.style.setProperty('--poster-scale', val);
+    }
+  </script>
+</body>
+</html>

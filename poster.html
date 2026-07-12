@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thrust Fit - Outdoor Wall Poster Mockup</title>
+  <meta name="description" content="First Premium Gym in Vignan Nagar - Thrust Fit outdoor wall poster mockup">
+
+  <!-- Google Fonts: Elegant serif + clean sans-serif -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       Reset & Base
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #0a0a0c;
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* ==========================================================================
+       Dashboard Header (Preview Controls - hidden on print)
+       ========================================================================== */
+    .dashboard-header {
+      background: rgba(10, 10, 12, 0.96);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.85rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(16px);
+    }
+
+    .dash-brand {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .dash-controls {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .dash-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .dash-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #fff;
+      padding: 0.45rem 1rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+    }
+    .dash-btn:hover, .dash-btn.active {
+      background: #fff;
+      color: #0a0a0c;
+      border-color: #fff;
+    }
+
+    .dash-slider {
+      -webkit-appearance: none;
+      width: 110px;
+      height: 3px;
+      background: #1c1c1e;
+      border-radius: 2px;
+      outline: none;
+    }
+    .dash-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       Canvas / Viewing Area
+       ========================================================================== */
+    .canvas-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 3rem 2rem;
+      background: radial-gradient(ellipse at 50% 30%, #141418 0%, #0a0a0c 70%);
+      position: relative;
+    }
+
+    /* Billboard mockup scene */
+    .billboard-scene {
+      position: relative;
+      width: 100%;
+      max-width: 1500px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Dark wall backdrop */
+    .wall-bg {
+      position: absolute;
+      top: -8%;
+      bottom: -8%;
+      left: -10%;
+      right: -10%;
+      background: radial-gradient(circle at 50% 15%, #1a1b20 0%, #0c0c0e 85%);
+      z-index: 0;
+      box-shadow: inset 0 0 80px rgba(0,0,0,0.9);
+      border-radius: 6px;
+    }
+
+    /* Subtle spotlights */
+    .spotlights {
+      position: absolute;
+      top: -8%;
+      left: 10%;
+      right: 10%;
+      height: 50%;
+      z-index: 1;
+      pointer-events: none;
+      display: flex;
+      justify-content: space-around;
+      opacity: 0.35;
+    }
+    .spot-beam {
+      width: 28%;
+      height: 100%;
+      background: radial-gradient(ellipse at top, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.01) 45%, transparent 75%);
+    }
+
+    /* Billboard frame */
+    .billboard-frame {
+      width: 100%;
+      position: relative;
+      z-index: 2;
+      background: #101012;
+      border: 12px solid #1a1a1e;
+      box-shadow:
+        0 40px 80px -20px rgba(0,0,0,0.95),
+        0 0 40px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+
+    /* ==========================================================================
+       THE POSTER — 10ft × 8ft (5:4 ratio)
+       Rendered at 1500px × 1200px for high-fidelity mockup
+       ========================================================================== */
+    .poster {
+      width: 100%;
+      aspect-ratio: 5 / 4;
+      position: relative;
+      overflow: hidden;
+      background: #0d0d0f;
+      container-type: size;
+      transform: scale(var(--poster-scale, 1));
+      transform-origin: center center;
+      transition: transform 0.25s ease-out;
+    }
+
+    /* --- Background: Full gym interior --- */
+    .poster-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    .poster-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+    }
+
+    /* --- Dark gradient overlay for left text area --- */
+    .poster-overlay-left {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 58%;
+      height: 100%;
+      z-index: 2;
+      background: linear-gradient(
+        to right,
+        rgba(15, 18, 20, 0.92) 0%,
+        rgba(15, 18, 20, 0.88) 30%,
+        rgba(15, 18, 20, 0.72) 55%,
+        rgba(15, 18, 20, 0.35) 75%,
+        transparent 100%
+      );
+    }
+
+    /* Extra bottom gradient for watermark readability */
+    .poster-overlay-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 30%;
+      z-index: 2;
+      background: linear-gradient(
+        to top,
+        rgba(10, 12, 14, 0.75) 0%,
+        rgba(10, 12, 14, 0.3) 50%,
+        transparent 100%
+      );
+    }
+
+    /* --- Hero Athletes (composited on left) --- */
+    .poster-hero {
+      position: absolute;
+      bottom: 14cqh;
+      left: 0;
+      width: 54%;
+      height: 62%;
+      z-index: 6;
+      display: flex;
+      align-items: flex-end;
+    }
+    .poster-hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: bottom center;
+      filter: brightness(0.95) contrast(1.05);
+      display: block;
+      -webkit-mask-image: linear-gradient(
+        to top,
+        transparent 0%,
+        rgba(0,0,0,0.6) 12%,
+        rgba(0,0,0,0.92) 22%,
+        black 35%
+      );
+      mask-image: linear-gradient(
+        to top,
+        transparent 0%,
+        rgba(0,0,0,0.6) 12%,
+        rgba(0,0,0,0.92) 22%,
+        black 35%
+      );
+    }
+
+    /* --- Brand Logo (top-right) --- */
+    .poster-logo {
+      position: absolute;
+      top: 3.5cqh;
+      right: 4cqw;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 0.5cqw;
+    }
+    .poster-logo img {
+      height: 11cqh;
+      width: auto;
+      filter: brightness(1.1);
+    }
+
+    /* --- Main Headline (upper-left) --- */
+    .poster-headline {
+      position: absolute;
+      top: 10cqh;
+      left: 4.5cqw;
+      z-index: 10;
+      max-width: 44cqw;
+    }
+    .poster-headline h1 {
+      font-family: 'Playfair Display', 'Georgia', serif;
+      font-weight: 900;
+      font-size: 5.2cqw;
+      line-height: 0.96;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      text-shadow: 0 2px 30px rgba(0,0,0,0.5);
+    }
+
+    /* --- Premium Stats Strip (replaces body copy) --- */
+    .poster-stats {
+      position: absolute;
+      top: 37cqh;
+      left: 4.5cqw;
+      z-index: 10;
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      max-width: 44cqw;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      padding: 0 2.2cqw 0 0;
+      margin-right: 2.2cqw;
+      border-right: 1px solid rgba(255,255,255,0.2);
+    }
+    .stat-item:last-child {
+      border-right: none;
+      margin-right: 0;
+      padding-right: 0;
+    }
+
+    .stat-value {
+      font-family: 'Playfair Display', 'Georgia', serif;
+      font-weight: 900;
+      font-size: 2.8cqw;
+      color: #ffffff;
+      line-height: 1.0;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+    }
+
+    .stat-label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 0.85cqw;
+      color: rgba(200, 200, 200, 0.7);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 0.3cqw;
+      white-space: nowrap;
+    }
+
+    /* --- THRUST Watermark (bottom span) --- */
+    .poster-watermark {
+      position: absolute;
+      bottom: -4.5cqh;
+      left: 0;
+      width: 100%;
+      z-index: 5;
+      text-align: left;
+      padding-left: 1cqw;
+      pointer-events: none;
+      overflow: visible;
+    }
+    .poster-watermark span {
+      font-family: 'Playfair Display', 'Georgia', serif;
+      font-weight: 900;
+      font-size: 22cqw;
+      color: rgba(55, 70, 75, 0.5);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      line-height: 0.78;
+      display: block;
+    }
+
+    /* --- Tagline (bottom center) --- */
+    .poster-tagline {
+      position: absolute;
+      bottom: 5.5cqh;
+      left: 0;
+      width: 100%;
+      z-index: 10;
+      text-align: center;
+    }
+    .poster-tagline h2 {
+      font-family: 'Playfair Display', 'Georgia', serif;
+      font-weight: 700;
+      font-size: 3cqw;
+      color: #ffffff;
+      letter-spacing: 0.06em;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.6);
+    }
+
+    /* --- Diamond / Star Accent (bottom-right) --- */
+    .poster-accent {
+      position: absolute;
+      bottom: 6cqh;
+      right: 6cqw;
+      z-index: 10;
+      font-size: 3.5cqw;
+      color: rgba(255, 255, 255, 0.75);
+      line-height: 1;
+      text-shadow: 0 0 15px rgba(255,255,255,0.2);
+    }
+
+    /* ==========================================================================
+       Raw View Mode
+       ========================================================================== */
+    .canvas-wrapper.view-raw {
+      background: #000;
+      padding: 0;
+    }
+    .canvas-wrapper.view-raw .wall-bg,
+    .canvas-wrapper.view-raw .spotlights {
+      display: none !important;
+    }
+    .canvas-wrapper.view-raw .billboard-frame {
+      border: none !important;
+      box-shadow: none !important;
+    }
+
+    /* ==========================================================================
+       Dimensions Info Bar
+       ========================================================================== */
+    .dimensions-bar {
+      position: absolute;
+      bottom: -35px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      z-index: 5;
+    }
+    .dim-label {
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+    }
+
+    /* ==========================================================================
+       Print Styles
+       ========================================================================== */
+    @media print {
+      .dashboard-header { display: none !important; }
+      .canvas-wrapper {
+        padding: 0 !important;
+        background: none !important;
+      }
+      .wall-bg, .spotlights, .dimensions-bar { display: none !important; }
+      .billboard-frame {
+        border: none !important;
+        box-shadow: none !important;
+      }
+      .poster {
+        transform: scale(1) !important;
+        width: 100vw !important;
+        height: 80vw !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======================================================================
+       Dashboard Header (Preview Controls)
+       ====================================================================== -->
+  <header class="dashboard-header" id="dashboard-header">
+    <div class="dash-brand">Thrust Fit — Poster Preview</div>
+    <div class="dash-controls">
+      <span class="dash-label">View:</span>
+      <button class="dash-btn active" id="btn-billboard" onclick="setView('billboard')">Billboard</button>
+      <button class="dash-btn" id="btn-raw" onclick="setView('raw')">Raw Poster</button>
+
+      <span class="dash-label" style="margin-left: 0.5rem;">Scale:</span>
+      <input type="range" min="0.4" max="1.4" step="0.05" value="1.0" class="dash-slider" id="scale-slider" oninput="setScale(this.value)">
+
+      <button class="dash-btn" onclick="window.print()">Print / PDF</button>
+    </div>
+  </header>
+
+  <!-- ======================================================================
+       Billboard Scene
+       ====================================================================== -->
+  <main class="canvas-wrapper" id="canvas">
+
+    <div class="billboard-scene">
+      <div class="wall-bg"></div>
+      <div class="spotlights">
+        <div class="spot-beam"></div>
+        <div class="spot-beam"></div>
+        <div class="spot-beam"></div>
+      </div>
+
+      <div class="billboard-frame">
+
+        <!-- ================================================================
+             THE POSTER (10ft W × 8ft H — 5:4 Landscape)
+             ================================================================ -->
+        <div class="poster" id="poster">
+
+          <!-- Layer 1: Full background image (gym interior) -->
+          <div class="poster-bg">
+            <img src="bg.jpeg" alt="Thrust Fit Premium Gym Interior" loading="eager">
+          </div>
+
+          <!-- Layer 2: Dark gradient overlays -->
+          <div class="poster-overlay-left"></div>
+          <div class="poster-overlay-bottom"></div>
+
+          <!-- Layer 3: Hero athletes composited on left (true transparent PNG) -->
+          <div class="poster-hero">
+            <img src="hero-transparent.png" alt="Elite Athletes" loading="eager">
+          </div>
+
+          <!-- Layer 4: THRUST watermark (bottom, semi-transparent) -->
+          <div class="poster-watermark">
+            <span>THRUST</span>
+          </div>
+
+          <!-- Brand Logo (top-right) -->
+          <div class="poster-logo">
+            <img src="logo.svg" alt="Thrust Fit Logo">
+          </div>
+
+          <!-- Main Headline (upper-left) -->
+          <div class="poster-headline">
+            <h1>First Premium<br>Gym In<br>Vignan Nagar</h1>
+          </div>
+
+          <!-- Premium Stat Callouts -->
+          <div class="poster-stats">
+            <div class="stat-item">
+              <span class="stat-value">8000+</span>
+              <span class="stat-label">Sq Ft Area</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">50+</span>
+              <span class="stat-label">Equipment</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">6</span>
+              <span class="stat-label">Recovery Zones</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">5AM–11PM</span>
+              <span class="stat-label">Open Daily</span>
+            </div>
+          </div>
+
+          <!-- Tagline (bottom center) -->
+          <div class="poster-tagline">
+            <h2>Train. Recover. Perform.</h2>
+          </div>
+
+
+        </div>
+        <!-- /poster -->
+
+      </div>
+      <!-- /billboard-frame -->
+
+      <div class="dimensions-bar">
+        <span class="dim-label">10 ft (W) × 8 ft (H) — Outdoor Wall Poster</span>
+      </div>
+
+    </div>
+    <!-- /billboard-scene -->
+
+  </main>
+
+  <!-- ======================================================================
+       Script: View Controls
+       ====================================================================== -->
+  <script>
+    function setView(mode) {
+      const canvas = document.getElementById('canvas');
+      const btnBillboard = document.getElementById('btn-billboard');
+      const btnRaw = document.getElementById('btn-raw');
+
+      if (mode === 'raw') {
+        canvas.classList.add('view-raw');
+        btnRaw.classList.add('active');
+        btnBillboard.classList.remove('active');
+      } else {
+        canvas.classList.remove('view-raw');
+        btnBillboard.classList.add('active');
+        btnRaw.classList.remove('active');
+      }
+    }
+
+    function setScale(val) {
+      document.documentElement.style.setProperty('--poster-scale', val);
+    }
+  </script>
+
+</body>
+</html>
